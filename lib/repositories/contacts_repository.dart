@@ -20,8 +20,19 @@ class ContactsRepository {
     );
   }
 
-  Future<void> deleteContact({required int id}) async{
-    await localDatabase.deleteContact(id: id);
+  Future<void> editContact({
+    required int id,
+    required String name,
+    required String number,
+  }) async {
+    await localDatabase.editContact(
+      id: id,
+      name: name,
+      number: number,
+    );
   }
 
+  Future<void> deleteContact({required int id}) async {
+    await localDatabase.deleteContact(id: id);
+  }
 }

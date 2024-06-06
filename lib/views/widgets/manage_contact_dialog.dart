@@ -1,25 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../models/contact.dart';
 import '../../utils/number_formatter.dart';
 
 class AddDialog extends StatefulWidget {
-  const AddDialog({super.key});
+  const AddDialog({super.key, this.contact});
+
+  final Contact? contact;
 
   @override
   State<AddDialog> createState() => _AddDialogState();
 }
 
 class _AddDialogState extends State<AddDialog> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.contact != null) {
+      name = widget.contact!.name;
+      number = widget.contact!.number.replaceAll('+998 ', '');
+      id = widget.contact!.id;
+    }
+  }
+
   final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final numberController = TextEditingController();
+
   final _phoneNumberFormatter = PhoneNumberFormatter();
+
+  String name = "";
+  String number = "";
+
+  int id = 0;
+
+  void submit() {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      Navigator.pop(context, {
+        'id': id,
+        'name': name,
+        'number': "+998 $number",
+      });
+    }
+  }
 
   @override
   void dispose() {
-    nameController.dispose();
-    numberController.dispose();
     super.dispose();
   }
 
@@ -33,7 +59,8 @@ class _AddDialogState extends State<AddDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              controller: nameController,
+              // controller: nameController,
+              initialValue: name,
               textInputAction: TextInputAction.next,
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
@@ -42,6 +69,9 @@ class _AddDialogState extends State<AddDialog> {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
+              onSaved: (newValue) {
+                name = newValue!;
+              },
               validator: (value) {
                 if (value!.trim().isEmpty) {
                   return "Enter name!";
@@ -51,7 +81,8 @@ class _AddDialogState extends State<AddDialog> {
             ),
             const SizedBox(height: 12),
             TextFormField(
-              controller: numberController,
+              // controller: numberController,
+              initialValue: number,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                   labelText: 'Number',
@@ -64,6 +95,9 @@ class _AddDialogState extends State<AddDialog> {
                 _phoneNumberFormatter,
                 LengthLimitingTextInputFormatter(12)
               ],
+              onSaved: (newValue) {
+                number = newValue!;
+              },
               validator: (value) {
                 if (value!.trim().isEmpty) {
                   return "Enter number!";
@@ -82,15 +116,8 @@ class _AddDialogState extends State<AddDialog> {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
-            if (formKey.currentState!.validate()) {
-              Navigator.pop(context, {
-                'name': nameController.text,
-                'number': "+998 ${numberController.text}",
-              });
-            }
-          },
-          child: const Text('Add contact'),
+          onPressed: submit,
+          child: Text(widget.contact == null ? 'Add contact' : 'Save contact'),
         ),
       ],
     );

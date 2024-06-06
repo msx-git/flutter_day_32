@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_day_32/models/contact.dart';
 
 class ContactItem extends StatelessWidget {
-  const ContactItem({super.key, required this.contact, required this.onDelete});
+  const ContactItem(
+      {super.key,
+      required this.contact,
+      required this.onDelete,
+      required this.onEdit});
 
   final Contact contact;
   final Future<void> Function({required Contact contact}) onDelete;
+  final Future<void> Function({required Contact contact}) onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class ContactItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () => onEdit(contact: contact),
               icon: const Icon(
                 CupertinoIcons.pencil,
                 color: Colors.teal,

@@ -31,6 +31,18 @@ class ContactsController {
     );
   }
 
+  Future<void> editContact({
+    required int id,
+    required String name,
+    required String number,
+  }) async {
+    await contactsRepository.editContact(
+      id: id,
+      name: name,
+      number: number,
+    );
+  }
+
   Future<void> deleteContact({required int id}) async {
     await contactsRepository.deleteContact(id: id);
   }

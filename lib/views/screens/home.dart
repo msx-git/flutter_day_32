@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_day_32/controllers/contacts_controller.dart';
-import 'package:flutter_day_32/views/widgets/contact_item.dart';
-import 'package:flutter_day_32/views/widgets/delete_dialog.dart';
 
+import '../../controllers/contacts_controller.dart';
 import '../../models/contact.dart';
-import '../widgets/add_dialog.dart';
+import '../widgets/contact_item.dart';
+import '../widgets/delete_dialog.dart';
+import '../widgets/manage_contact_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,23 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: contacts.length,
               itemBuilder: (context, index) {
                 final contact = contacts[index];
-                return ContactItem(contact: contact, onDelete: deleteContact);
+                return ContactItem(
+                  contact: contact,
+                  onDelete: deleteContact,
+                  onEdit: editContact,
+                );
               },
             );
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          addContact();
-          // await contactsController.addContact(
-          //   name: "New Contact",
-          //   number: "number",
-          //   avatarUrl:
-          //       "https://randomuser.me/api/portraits/men/${Random().nextInt(98) + 1}.jpg",
-          // );
-          // setState(() {});
-        },
+        onPressed: addContact,
         child: const Icon(Icons.add),
       ),
     );
@@ -80,6 +75,25 @@ class _HomeScreenState extends State<HomeScreen> {
         number: data['number'],
         avatarUrl:
             "https://randomuser.me/api/portraits/men/${Random().nextInt(98) + 1}.jpg",
+      );
+      setState(() {});
+    }
+  }
+
+  Future<void> editContact({required Contact contact}) async {
+    final data = await showDialog(
+      context: context,
+      builder: (context) {
+        return AddDialog(
+          contact: contact,
+        );
+      },
+    );
+    if (data != null) {
+      await contactsController.editContact(
+        id: data['id'],
+        name: data['name'],
+        number: data['number'],
       );
       setState(() {});
     }

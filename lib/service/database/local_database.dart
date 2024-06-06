@@ -72,6 +72,23 @@ class LocalDatabase {
     }
   }
 
+  Future<void> editContact({
+    required int id,
+    required String name,
+    required String number,
+  }) async {
+    final db = await _localDatabase.database;
+    db.update(
+      tableName,
+      {
+        'name': name,
+        'number': number,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   /// Delete Contact
   Future<void> deleteContact({required int id}) async {
     final db = await _localDatabase.database;
